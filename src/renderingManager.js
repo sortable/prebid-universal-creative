@@ -2,14 +2,14 @@ import * as utils from './utils';
 import * as domHelper from './domHelper';
 
 const GOOGLE_IFRAME_HOSTNAME = 'tpc.googlesyndication.com';
-const DEFAULT_CACHE_HOST = 'prebid.adnxs.com';
-const DEFAULT_CACHE_PATH = '/pbc/v1/cache';
+const DEFAULT_CACHE_HOST = 'c.deployads.com';
+const DEFAULT_CACHE_PATH = '/cache';
 
 /**
- * 
+ *
  * @param {Object} win Window object
  * @param {Object} environment Environment object
- * @returns {Object} 
+ * @returns {Object}
  */
 export function newRenderingManager(win, environment) {
   /**
@@ -170,7 +170,7 @@ export function newRenderingManager(win, environment) {
 
   /**
    * Cache request Callback to display creative
-   * @param {Bool} isMobileApp 
+   * @param {Bool} isMobileApp
    * @returns {function} a callback function that parses response
    */
   function responseCallback(isMobileApp) {
@@ -205,7 +205,7 @@ export function newRenderingManager(win, environment) {
 
   /**
    * Load response from localStorage. In case of MoPub, sdk caches response
-   * @param {string} cacheId 
+   * @param {string} cacheId
    */
   function loadFromLocalCache(cacheId) {
     let bid = win.localStorage.getItem(cacheId);
@@ -215,7 +215,7 @@ export function newRenderingManager(win, environment) {
 
   /**
    * Parse response
-   * @param {string} response 
+   * @param {string} response
    * @returns {Object} bidObject parsed response
    */
   function parseResponse(response) {

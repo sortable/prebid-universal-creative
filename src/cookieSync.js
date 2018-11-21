@@ -11,7 +11,8 @@
 import * as domHelper from './domHelper';
 
 const VALID_ENDPOINTS = {
-  rubicon: 'https://prebid-server.rubiconproject.com/cookie_sync'
+  rubicon: 'https://prebid-server.rubiconproject.com/cookie_sync',
+  sortable: 'https://c.deployads.com/pbs/cookie_sync'
 };
 const ENDPOINT = sanitizeEndpoint(parseQueryParam('endpoint', window.location.search));
 const MAX_SYNC_COUNT = sanitizeSyncCount(parseInt(parseQueryParam('max_sync_count', window.location.search), 10));
@@ -164,7 +165,7 @@ function sanitizeEndpoint(value) {
   if (value && VALID_ENDPOINTS.hasOwnProperty(value)) {
     return VALID_ENDPOINTS[value]
   }
-  return 'https://prebid.adnxs.com/pbs/v1/cookie_sync';
+  return 'https://c.deployads.com/pbs/cookie_sync';
 }
 
 /**

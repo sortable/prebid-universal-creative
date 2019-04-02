@@ -2,17 +2,21 @@
 #
 # Check https://circleci.com/docs/2.0/language-javascript/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  aws-s3: circleci/aws-s3@1.0.0
 jobs:
   build:
     docker:
       # specify the version you desire here
       - image: circleci/node:7.10
-      
+
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
       # documented at https://circleci.com/docs/2.0/circleci-images/
       # - image: circleci/mongo:3.4.4
+    environment:
+      AWS_REGION: us-east-1
 
     working_directory: ~/prebid-universal-creative
 
@@ -26,6 +30,8 @@ jobs:
           # fallback to using the latest cache if no exact match is found
           - v1-dependencies-
 
+      - run: sudo apt install python-pip python-dev
+
       - run: npm install
 
       - save_cache:
@@ -34,17 +40,16 @@ jobs:
           key: v1-dependencies-{{ checksum "package.json" }}
 
       - run: sudo npm install -g gulp
-      # Download and run BrowserStack local
-      - run:
-          name : Download BrowserStack Local binary and start it.
-          command : |
-            # Download the browserstack binary file
-            wget "https://www.browserstack.com/browserstack-local/BrowserStackLocal-linux-x64.zip"
-            # Unzip it
-            unzip BrowserStackLocal-linux-x64.zip
-            # Run the file with user's access key
-            ./BrowserStackLocal ${BROWSERSTACK_ACCESS_KEY} &
-      # run tests!
-      - run: 
-          name: BrowserStack testing
-          command: gulp test --browserstack
+
+      - run: gulp build
+
+      - aws-s3/copy:
+          from: dist/creative.js
+          to: 's3://assets.deployads.com/universal-creative/creative.js'
+          arguments: '--acl public-read --cache-control "max-age=86400"'
+
+workflows:
+    build:
+      jobs:
+        - build:
+            context: Sortable-Global

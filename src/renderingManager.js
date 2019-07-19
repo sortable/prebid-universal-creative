@@ -27,15 +27,21 @@ export function newRenderingManager(win, environment) {
    * @param  {dataObject} dataObject
    */
   let renderAd = function(doc, dataObject) {
-    const targetingData = utils.transformAuctionTargetingData(dataObject);
-    if(environment.isMobileApp(targetingData.env)) {
-      renderAmpOrMobileAd(targetingData.cacheHost, targetingData.cachePath, targetingData.uuid, targetingData.size, true);
-    } else if (environment.isAmp(targetingData.uuid)) {
-      renderAmpOrMobileAd(targetingData.cacheHost, targetingData.cachePath, targetingData.uuid, targetingData.size);
-    } else if (environment.isCrossDomain()) {
-      renderCrossDomain(targetingData.adId, targetingData.adServerDomain, targetingData.pubUrl);
-    } else {
-      renderLegacy(doc, targetingData.adId);
+    try {
+      const targetingData = utils.transformAuctionTargetingData(dataObject);
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+renderAd&p=" + encodeURIComponent(JSON.stringify(targetingData)), () => {});
+      if(environment.isMobileApp(targetingData.env)) {
+        renderAmpOrMobileAd(targetingData.cacheHost, targetingData.cachePath, targetingData.uuid, targetingData.size, true);
+      } else if (environment.isAmp(targetingData.uuid)) {
+        renderAmpOrMobileAd(targetingData.cacheHost, targetingData.cachePath, targetingData.uuid, targetingData.size);
+      } else if (environment.isCrossDomain()) {
+        renderCrossDomain(targetingData.adId, targetingData.adServerDomain, targetingData.pubUrl);
+      } else {
+        renderLegacy(doc, targetingData.adId);
+      }
+    } catch (ex) {
+      utils.sendRequest("https://e.deployads.com/e/e.gif?m=Universal+Creative&em=" + encodeURIComponent(`Misc error: ${ex}`), () => {});
+      throw ex;
     }
   };
 
@@ -93,6 +99,7 @@ export function newRenderingManager(win, environment) {
 
         if (adObject.mediaType === 'video') {
           console.log('Error trying to write ad.');
+          utils.sendRequest("https://e.deployads.com/e/e.gif?m=Universal+Creative&em=" + encodeURIComponent(`Error trying to write video ad`), () => {});
         } else if (ad) {
           const iframe =  domHelper.getEmptyIframe(adObject.height, adObject.width);
           body.appendChild(iframe);
@@ -108,6 +115,7 @@ export function newRenderingManager(win, environment) {
           domHelper.insertElement(iframe, doc, 'body');
         } else {
           console.log(`Error trying to write ad. No ad for bid response id: ${id}`);
+          utils.sendRequest("https://e.deployads.com/e/e.gif?m=Universal+Creative&em=" + encodeURIComponent(`No ad for bid response id: ${id}`), () => {});
         }
       }
     }
@@ -150,9 +158,12 @@ export function newRenderingManager(win, environment) {
    * @param {Bool} isMobileApp flag to detect mobile app
    */
   function renderAmpOrMobileAd(cacheHost, cachePath, uuid = '', size, isMobileApp) {
+    const paramsStr = encodeURIComponent(JSON.stringify({cacheHost: cacheHost, cachePath: cachePath, uuid: uuid, size: size, isMobileApp: isMobileApp}));
+    utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+renderAmpOrMobileAd&p=" + paramsStr, () => {});
     // For MoPub, creative is stored in localStorage via SDK.
     let search = 'Prebid_';
     if(uuid.substr(0, search.length) === search) {
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+loadFromLocalCache&p=" + paramsStr, () => {});
       loadFromLocalCache(uuid)
     } else {
       let adUrl = `${getCacheEndpoint(cacheHost, cachePath)}?uuid=${uuid}`;
@@ -164,6 +175,7 @@ export function newRenderingManager(win, environment) {
       } else {
         console.log('Targeting key hb_size not found to resize creative');
       }
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+loadingFromPBC&p=" + paramsStr, () => {});
       utils.sendRequest(adUrl, responseCallback(isMobileApp));
     }
   }
@@ -175,14 +187,22 @@ export function newRenderingManager(win, environment) {
    */
   function responseCallback(isMobileApp) {
     return function(response) {
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+loadedFromPBC", () => {});
       let bidObject = parseResponse(response);
       let ad = utils.getCreativeCommentMarkup(bidObject);
       let width = (bidObject.width) ? bidObject.width : bidObject.w;
       let height = (bidObject.height) ? bidObject.height : bidObject.h;
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+parsed?p=" + encodeURIComponent(JSON.stringify({
+        width: bidObject.width,
+        height: bidObject.height,
+        hasAdm: !!bidObject.adm,
+        nurl: bidObject.nurl
+      })), () => {});
       if (bidObject.adm) {
         ad += (isMobileApp) ? constructMarkup(bidObject.adm, width, height) : bidObject.adm;
         if (bidObject.nurl) {
           ad += utils.createTrackPixelHtml(decodeURIComponent(bidObject.nurl));
+          utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+addedNurl", () => {});
         }
         utils.writeAdHtml(ad);
       } else if (bidObject.nurl) {
@@ -224,6 +244,7 @@ export function newRenderingManager(win, environment) {
       bidObject = JSON.parse(response);
     } catch (error) {
       console.log(`Error parsing response from cache host: ${error}`);
+      utils.sendRequest("https://e.deployads.com/e/e.gif?m=Universal+Creative&em=" + encodeURIComponent(`Error parsing response from cache host: ${error}`), () => {});
     }
     return bidObject;
   }

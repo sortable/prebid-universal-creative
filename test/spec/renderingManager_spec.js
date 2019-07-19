@@ -38,7 +38,7 @@ const renderingMocks = {
       innerHeight: 250
     }
   }
-} 
+}
 
 let mockIframe = {
   contentDocument: {
@@ -75,7 +75,7 @@ describe('renderingManager', function() {
       sendRequestSpy = sinon.spy(utils, 'sendRequest');
       mockWin = merge(mocks.createFakeWindow('http://example.com'), renderingMocks.getWindowObject());
     });
-    
+
     afterEach(function() {
       writeHtmlSpy.resetHistory();
       sendRequestSpy.resetHistory();
@@ -90,7 +90,7 @@ describe('renderingManager', function() {
       isMobileApp: () => true,
       isSafeFrame: () => false
     }
-    
+
     it('should render mobile app creative', function() {
       const renderObject = newRenderingManager(mockWin, env);
       let ucTagData = {
@@ -99,7 +99,7 @@ describe('renderingManager', function() {
         uuid: '123',
         size: '300x250'
       };
-      
+
       renderObject.renderAd(mockWin.document, ucTagData);
 
       let response = {
@@ -108,9 +108,9 @@ describe('renderingManager', function() {
         crid: 123,
         adm: 'ad-markup'
       }
-      requests[0].respond(200, {}, JSON.stringify(response));
+      requests[3].respond(200, {}, JSON.stringify(response));
       expect(writeHtmlSpy.callCount).to.equal(1);
-      expect(sendRequestSpy.args[0][0]).to.equal('https://example.com/path?uuid=123');
+      expect(sendRequestSpy.args[3][0]).to.equal('https://example.com/path?uuid=123');
     });
 
     it('should render mobile app creative using default cacheHost and cachePath', function() {
@@ -119,7 +119,7 @@ describe('renderingManager', function() {
         uuid: '123',
         size: '300x250'
       };
-      
+
       renderObject.renderAd(mockWin.document, ucTagData);
 
       let response = {
@@ -128,9 +128,9 @@ describe('renderingManager', function() {
         crid: 123,
         adm: 'ad-markup'
       }
-      requests[0].respond(200, {}, JSON.stringify(response));
+      requests[3].respond(200, {}, JSON.stringify(response));
       expect(writeHtmlSpy.callCount).to.equal(1);
-      expect(sendRequestSpy.args[0][0]).to.equal('https://prebid.adnxs.com/pbc/v1/cache?uuid=123');
+      expect(sendRequestSpy.args[3][0]).to.equal('https://c.deployads.com/cache?uuid=123');
     });
   });
 
@@ -144,7 +144,7 @@ describe('renderingManager', function() {
       sendRequestSpy = sinon.spy(utils, 'sendRequest');
       mockWin = merge(mocks.createFakeWindow('http://example.com'), renderingMocks.getWindowObject());
     });
-    
+
     afterEach(function() {
       writeHtmlSpy.resetHistory();
       sendRequestSpy.resetHistory();
@@ -160,7 +160,7 @@ describe('renderingManager', function() {
       isAmp: () => true,
       isSafeFrame: () => true
     }
-    
+
     it('should render amp creative', function() {
       const renderObject = newRenderingManager(mockWin, env);
 
@@ -170,7 +170,7 @@ describe('renderingManager', function() {
         uuid: '123',
         size: '300x250'
       };
-        
+
       renderObject.renderAd(mockWin.document, ucTagData);
 
       let response = {
@@ -179,12 +179,12 @@ describe('renderingManager', function() {
         crid: 123,
         adm: 'ad-markup'
       }
-      requests[0].respond(200, {}, JSON.stringify(response));
+      requests[3].respond(200, {}, JSON.stringify(response));
       expect(writeHtmlSpy.args[0][0]).to.equal('<!--Creative 123 served by Prebid.js Header Bidding-->ad-markup');
-      expect(sendRequestSpy.args[0][0]).to.equal('https://example.com/path?uuid=123');
+      expect(sendRequestSpy.args[3][0]).to.equal('https://example.com/path?uuid=123');
     });
   });
-  
+
   describe('cross domain creative', function() {
     let parseStub;
     let iframeStub;
@@ -232,7 +232,7 @@ describe('renderingManager', function() {
           height: 250
         })
       }
-      
+
       mockWin.postMessage(ev);
       expect(mockIframe.contentDocument.write.args[0][0]).to.equal("ad");
     });
@@ -251,7 +251,7 @@ describe('renderingManager', function() {
       let ucTagData = {
         adId: '123'
       };
-        
+
       renderObject.renderAd(mockWin.document, ucTagData);
       expect(mockWin.parent.$$PREBID_GLOBAL$$.renderAd.callCount).to.equal(1);
     });

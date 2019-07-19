@@ -1,0 +1,15 @@
+<html><body>
+<script src = "http://localhost:9990/build/creative.js"></script>
+<script>
+  var ucTagData = {};
+  ucTagData.adServerDomain = "";
+  ucTagData.pubUrl = "pubUrl";
+  ucTagData.targetingKeywords = "hb_adid:123abc,hb_adid_appnexus:123abc,hb_format:banner,hb_size:300x250,hb_bidder:appnexus,test,hb_cache_id:3b857d9d-5070-4cf3-9a65-793fba1d21cb,hb_env:mobile-app";
+  ucTagData.hbPb = "0.10";
+   try {
+    ucTag.renderAd(document, ucTagData);
+  } catch (e) {
+    console.log(e);
+  }
+</script>
+        </body></html>

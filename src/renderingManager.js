@@ -192,7 +192,7 @@ export function newRenderingManager(win, environment) {
       let ad = utils.getCreativeCommentMarkup(bidObject);
       let width = (bidObject.width) ? bidObject.width : bidObject.w;
       let height = (bidObject.height) ? bidObject.height : bidObject.h;
-      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+parsed?p=" + encodeURIComponent(JSON.stringify({
+      utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+parsed&p=" + encodeURIComponent(JSON.stringify({
         width: bidObject.width,
         height: bidObject.height,
         hasAdm: !!bidObject.adm,

@@ -180,7 +180,7 @@ describe('renderingManager', function() {
         adm: 'ad-markup'
       }
       requests[3].respond(200, {}, JSON.stringify(response));
-      expect(writeHtmlSpy.args[0][0]).to.equal('<!--Creative 123 served by Prebid.js Header Bidding--><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm"></div>ad-markup');
+      expect(writeHtmlSpy.args[0][0]).to.equal('<!--Creative 123 served by Prebid.js Header Bidding--><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=123"></div>ad-markup');
       expect(sendRequestSpy.args[3][0]).to.equal('https://example.com/path?uuid=123');
     });
   });

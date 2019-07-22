@@ -199,9 +199,12 @@ export function newRenderingManager(win, environment) {
         nurl: bidObject.nurl
       })), () => {});
       if (bidObject.adm) {
+        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm");
         ad += (isMobileApp) ? constructMarkup(bidObject.adm, width, height) : bidObject.adm;
         if (bidObject.nurl) {
+          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl");
           ad += utils.createTrackPixelHtml(decodeURIComponent(bidObject.nurl));
+          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl");
           utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+addedNurl", () => {});
         }
         utils.writeAdHtml(ad);

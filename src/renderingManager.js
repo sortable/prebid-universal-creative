@@ -176,16 +176,17 @@ export function newRenderingManager(win, environment) {
         console.log('Targeting key hb_size not found to resize creative');
       }
       utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+loadingFromPBC&p=" + paramsStr, () => {});
-      utils.sendRequest(adUrl, responseCallback(isMobileApp));
+      utils.sendRequest(adUrl, responseCallback(isMobileApp, uuid));
     }
   }
 
   /**
    * Cache request Callback to display creative
    * @param {Bool} isMobileApp
+   * @param {string} uuid id to render response from cache endpoint
    * @returns {function} a callback function that parses response
    */
-  function responseCallback(isMobileApp) {
+  function responseCallback(isMobileApp, uuid) {
     return function(response) {
       utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+loadedFromPBC", () => {});
       let bidObject = parseResponse(response);
@@ -199,12 +200,12 @@ export function newRenderingManager(win, environment) {
         nurl: bidObject.nurl
       })), () => {});
       if (bidObject.adm) {
-        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm");
+        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=" + encodeURIComponent(uuid));
         ad += (isMobileApp) ? constructMarkup(bidObject.adm, width, height) : bidObject.adm;
         if (bidObject.nurl) {
-          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl");
+          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl&p=" + encodeURIComponent(uuid));
           ad += utils.createTrackPixelHtml(decodeURIComponent(bidObject.nurl));
-          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl");
+          ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl&p=" + encodeURIComponent(uuid));
           utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+addedNurl", () => {});
         }
         utils.writeAdHtml(ad);

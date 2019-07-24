@@ -200,14 +200,15 @@ export function newRenderingManager(win, environment) {
         nurl: bidObject.nurl
       })), () => {});
       if (bidObject.adm) {
-        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=" + encodeURIComponent(uuid));
-        ad += (isMobileApp) ? constructMarkup(bidObject.adm, width, height) : bidObject.adm;
         if (bidObject.nurl) {
           ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl&p=" + encodeURIComponent(uuid));
           ad += utils.createTrackPixelHtml(decodeURIComponent(bidObject.nurl));
           ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl&p=" + encodeURIComponent(uuid));
           utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+addedNurl", () => {});
         }
+        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=" + encodeURIComponent(uuid));
+        ad += (isMobileApp) ? constructMarkup(bidObject.adm, width, height) : bidObject.adm;
+        ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postadm&p=" + encodeURIComponent(uuid));
         utils.writeAdHtml(ad);
       } else if (bidObject.nurl) {
         if(isMobileApp) {

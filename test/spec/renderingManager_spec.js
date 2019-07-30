@@ -177,10 +177,11 @@ describe('renderingManager', function() {
         width: 300,
         height: 250,
         crid: 123,
-        adm: 'ad-markup'
+        adm: 'ad-markup',
+        nurl: 'http://c.deployads.com/a/asdfasdfasdf/asdfasdf/asdfasdf/p'
       }
       requests[3].respond(200, {}, JSON.stringify(response));
-      expect(writeHtmlSpy.args[0][0]).to.equal('<!--Creative 123 served by Prebid.js Header Bidding--><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=123"></div>ad-markup<div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+postadm&p=123"></div>');
+      expect(writeHtmlSpy.args[0][0]).to.equal('<!--Creative 123 served by Prebid.js Header Bidding--><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl&p=123"></div><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://c.deployads.com/a/asdfasdfasdf/asdfasdf/asdfasdf/p"></div><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl&p=123"></div><div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+preadm&p=123"></div>ad-markup<div style="position:absolute;left:0px;top:0px;visibility:hidden;"><img src="https://e.deployads.com/e/m.gif?m=Universal+Creative+postadm&p=123"></div>');
       expect(sendRequestSpy.args[3][0]).to.equal('https://example.com/path?uuid=123');
     });
   });

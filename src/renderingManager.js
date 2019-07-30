@@ -202,7 +202,7 @@ export function newRenderingManager(win, environment) {
       if (bidObject.adm) {
         if (bidObject.nurl) {
           ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+prenurl&p=" + encodeURIComponent(uuid));
-          ad += utils.createTrackPixelHtml(decodeURIComponent(bidObject.nurl));
+          ad += utils.createTrackPixelHtml(bidObject.nurl.replace("http://", "https://"));
           ad += utils.createTrackPixelHtml("https://e.deployads.com/e/m.gif?m=Universal+Creative+postnurl&p=" + encodeURIComponent(uuid));
           utils.sendRequest("https://e.deployads.com/e/m.gif?m=Universal+Creative+addedNurl", () => {});
         }
